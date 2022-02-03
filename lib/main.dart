@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'theme.dart';
-import 'scout_match.dart';
+import 'screens/scout_match.dart';
 
 void main() {
   runApp(MyApp());
