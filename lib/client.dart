@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
+import 'package:rapid_react_scouting/credentials.dart';
 import 'package:rapid_react_scouting/models/teamdata.dart';
 import 'package:rapid_react_scouting/models/teammatchstats.dart';
 import 'package:rapid_react_scouting/models/teamnumber.dart';
@@ -10,24 +11,21 @@ import 'package:rapid_react_scouting/models/user.dart';
 class RRSClient {
   static const endpoint = "http://127.0.0.1:8000";
   late oauth2.Client client;
-  final String email;
-  final String password;
+  final Credentials credentials;
   late final User user;
-  int _selectedTeamIndex = -1;
+  int selectedTeamIndex = 0;
 
-  RRSClient._construct(this.email, this.password);
+  RRSClient._construct(this.credentials);
 
-  static Future<RRSClient> init(String email, String password) async {
-    RRSClient rrsc = RRSClient._construct(email, password);
-    rrsc.client = await oauth2.resourceOwnerPasswordGrant(authEndpoint, email, password);
-    Map<String, dynamic> json = Jwt.parseJwt(rrsc.jwt);
-    rrsc.user = User.fromJson(json);
-    rrsc.selectedTeamIndex = 0;
+  static RRSClient init(Credentials credentials) {
+    RRSClient rrsc = RRSClient._construct(credentials);
+    rrsc.refreshToken();
     return rrsc;
   }
 
   void refreshToken() async {
     client = await oauth2.resourceOwnerPasswordGrant(authEndpoint, email, password);
+    refreshUser();
   }
 
   void checkAndRefreshToken() async {
@@ -36,30 +34,34 @@ class RRSClient {
     }
   }
 
+  void refreshUser() {
+    Map<String, dynamic> json = Jwt.parseJwt(jwt);
+    user = User.fromJson(json);
+  }
+
   String get jwt {
     return client.credentials.accessToken;
   }
 
+  String get email {
+    return credentials.email;
+  }
+
+  String get password {
+    return credentials.password;
+  }
+
   TeamNumber get selectedTeam {
-    return user.teams[_selectedTeamIndex];
+    return user.teams[selectedTeamIndex];
   }
 
-  int get selectedTeamIndex {
-    return _selectedTeamIndex;
-  }
-
-  set selectedTeamIndex(int i) {
-    user.teams.elementAt(i);
-    _selectedTeamIndex = i;
+  bool get hasTeams {
+    return user.teams.isNotEmpty;
   }
 
   // Endpoints
   static Uri get authEndpoint {
     return Uri.parse(endpoint + '/token');
-  }
-
-  static Uri get tryAuthEndpoint {
-    return Uri.parse(endpoint + '/tryauth');
   }
 
   static Uri metadataEndpoint(TeamNumber team) {
