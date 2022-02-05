@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ScoutingScreen extends StatefulWidget {
-  const ScoutingScreen({Key? key}): super(key: key);
+class Scouting extends StatefulWidget {
+  const Scouting({Key? key}): super(key: key);
 
   @override
-  State<ScoutingScreen> createState() => _ScoutingScreenState();
+  State<Scouting> createState() => _ScoutingState();
 }
 
-class _ScoutingScreenState extends State<ScoutingScreen> {
+class _ScoutingState extends State<Scouting> {
   int _teamNumber = 0;
   final _controller = TextEditingController();
 

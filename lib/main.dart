@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rapid_react_scouting/screens/settings.dart';
 import 'package:rapid_react_scouting/state.dart';
 import 'theme.dart';
-import 'screens/scoutingscreen.dart';
+import 'screens/scouting.dart';
 
 final rrsStateProvider = StateNotifierProvider<RRSStateNotifier, RRSState>((ref) {
   return RRSStateNotifier();
@@ -47,16 +48,16 @@ class _RRSHomeState extends ConsumerState<RRSHome> {
   void initState() {
     super.initState();
     pageList.add(const Text("Tournament"));
-    pageList.add(const ScoutingScreen());
+    pageList.add(const Scouting());
     pageList.add(const Text("Leaderboard"));
-    pageList.add(const Text("Settings"));
+    pageList.add(const Settings());
     _selectedIndex = pageList.length - 1;
     f = ref.read(rrsStateProvider).initialize();
   }
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = ref.watch(rrsStateProvider).isDisabled ? pageList.length - 1 : index;
+      _selectedIndex = ref.watch(rrsStateProvider.select((value) => value.isDisabled)) ? pageList.length - 1 : index;
     });
   }
 

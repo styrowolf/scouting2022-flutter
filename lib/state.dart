@@ -93,4 +93,23 @@ class RRSStateNotifier extends StateNotifier<RRSState> {
     await _state.initialize(credentials: credentials);
     state = _state;
   }
+
+  void logout() {
+    RRSState _state = state.copyWith();
+    _state._credentials = null;
+    _state._setupClientAndSetStatus();
+    _state = state;
+  }
+
+  void login({Credentials? credentials, String? email, String? password}) {
+    if (email != null && password != null) {
+      credentials ??= Credentials(email, password);
+    }
+    if (credentials == null) return;
+    RRSState _state = state.copyWith();
+    _state._credentials = credentials;
+    _state._setupClientAndSetStatus();
+    credentials.toStorage();
+    _state = state;
+  }
 }
