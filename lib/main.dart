@@ -11,8 +11,6 @@ final rrsStateProvider = StateNotifierProvider<RRSStateNotifier, RRSState>((ref)
   return RRSStateNotifier();
 });
 
-
-
 void main() {
   runApp(ProviderScope(child: RRSApp()));
 }

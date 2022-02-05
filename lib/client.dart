@@ -17,9 +17,9 @@ class RRSClient {
 
   RRSClient._construct(this.credentials);
 
-  static RRSClient init(Credentials credentials) {
+  static Future<RRSClient> init(Credentials credentials) async {
     RRSClient rrsc = RRSClient._construct(credentials);
-    rrsc.refreshToken();
+    await rrsc.refreshToken();
     return rrsc;
   }
 
@@ -62,6 +62,10 @@ class RRSClient {
   // Endpoints
   static Uri get authEndpoint {
     return Uri.parse(endpoint + '/token');
+  }
+
+  static Uri get registrationEndpoint {
+    return Uri.parse(endpoint + '/register');
   }
 
   static Uri metadataEndpoint(TeamNumber team) {

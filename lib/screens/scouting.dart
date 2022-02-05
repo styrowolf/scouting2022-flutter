@@ -47,7 +47,6 @@ class _ScoutingState extends State<Scouting> {
             decoration: const InputDecoration(
               labelText: 'Team number',
             ),
-            //onChanged: _setTeamNumber,
             controller: _controller,
           )
         ],

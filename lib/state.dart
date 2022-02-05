@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rapid_react_scouting/client.dart';
 import 'package:rapid_react_scouting/credentials.dart';
@@ -5,9 +8,12 @@ import 'package:rapid_react_scouting/credentials.dart';
 // https://riverpod.dev/docs/providers/state_notifier_provider
 
 class RRSState {
-  late final RRSClient client;
-  late final Credentials? _credentials;
-  late final Status status;
+  RRSClient? client;
+  late Credentials? _credentials;
+  late Status status;
+
+  RRSState();
+  RRSState._construct(this.client, this._credentials, this.status);
 
   Future<void> initialize({Credentials? credentials}) async {
     if (credentials != null) {
@@ -32,17 +38,17 @@ class RRSState {
         state._credentials = credentials;
       }
     }
-    state._setupClientAndSetStatus();
+    await state._setupClientAndSetStatus();
     return state;
   }
 
-  void _setupClientAndSetStatus() {
+  Future<void> _setupClientAndSetStatus() async {
     if (_credentials == null) {
       status = Status.noCredentials;
     } else {
       try {
-        client = RRSClient.init(_credentials!);
-        if (client.hasTeams) {
+        client = await RRSClient.init(_credentials!);
+        if (client!.hasTeams) {
           status = Status.successfullyLoggedIn;
         } else {
           status = Status.noTeams;
@@ -54,7 +60,7 @@ class RRSState {
   }
 
   RRSState copyWith() {
-    return this;
+    return RRSState._construct(client, _credentials, status);
   }
 
   bool get noCredentials {
@@ -98,18 +104,32 @@ class RRSStateNotifier extends StateNotifier<RRSState> {
     RRSState _state = state.copyWith();
     _state._credentials = null;
     _state._setupClientAndSetStatus();
-    _state = state;
+    state = _state;
   }
 
-  void login({Credentials? credentials, String? email, String? password}) {
+  Future<void> login({Credentials? credentials, String? email, String? password}) async {
     if (email != null && password != null) {
       credentials ??= Credentials(email, password);
     }
     if (credentials == null) return;
     RRSState _state = state.copyWith();
     _state._credentials = credentials;
-    _state._setupClientAndSetStatus();
+    await _state._setupClientAndSetStatus();
     credentials.toStorage();
-    _state = state;
+    state = _state;
+  }
+
+  Future<void> register({Credentials? credentials, String? email, String? password}) async {
+    if (email != null && password != null) {
+      credentials ??= Credentials(email, password);
+    }
+    if (credentials == null) return;
+    var client = HttpClient();
+    var request = await client.postUrl(RRSClient.registrationEndpoint);
+    request.headers.contentType =
+    ContentType('application', 'json', charset: 'utf-8');
+    request.write(jsonEncode(credentials.toJson()));
+    await request.close();
+    await login(credentials: credentials);
   }
 }
