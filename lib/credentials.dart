@@ -15,14 +15,14 @@ class Credentials {
   Credentials(this.email, this.password);
 
   static Future<Credentials?> fromStorage() async {
-    if (await _storage.containsKey(key: _key)) {
-      String jsonString = (await _storage.read(key: _key))!;
+    String? jsonString = await _storage.read(key: _key);
+    if (jsonString != null) {
       return Credentials.fromJson(jsonDecode(jsonString));
     }
     return null;
   }
 
-  void toStorage() async {
+  Future<void> toStorage() async {
     await _storage.write(key: _key, value: jsonEncode(toJson()));
   }
   

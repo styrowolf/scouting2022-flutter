@@ -23,14 +23,14 @@ class RRSClient {
     return rrsc;
   }
 
-  void refreshToken() async {
+  Future<void> refreshToken() async {
     client = await oauth2.resourceOwnerPasswordGrant(authEndpoint, email, password);
     refreshUser();
   }
 
-  void checkAndRefreshToken() async {
+  Future<void> checkAndRefreshToken() async {
     if (Jwt.isExpired(jwt)) {
-      refreshToken();
+      await refreshToken();
     }
   }
 
@@ -86,7 +86,7 @@ class RRSClient {
 
   // Request methods
   Future<TeamDataMetadata?> getMetadata() async {
-    checkAndRefreshToken();
+    await checkAndRefreshToken();
     var response = await client.get(metadataEndpoint(selectedTeam));
     if (response.statusCode == 200) {
       var jsonString = String.fromCharCodes(response.bodyBytes);
@@ -98,7 +98,7 @@ class RRSClient {
   }
 
   Future<TeamData?> getData() async {
-    checkAndRefreshToken();
+    await checkAndRefreshToken();
     var response = await client.get(dataEndpoint(selectedTeam));
     if (response.statusCode == 200) {
       var jsonString = String.fromCharCodes(response.bodyBytes);
@@ -109,8 +109,8 @@ class RRSClient {
     }
   }
 
-  void createTournament(String name) async {
-    checkAndRefreshToken();
+  Future<void> createTournament(String name) async {
+    await checkAndRefreshToken();
     Map<String,String> headers = {
       'Content-type' : 'application/json',
     };
@@ -122,8 +122,8 @@ class RRSClient {
     );
   }
 
-  void createMatch(String name, String tournamentId) async {
-    checkAndRefreshToken();
+  Future<void> createMatch(String name, String tournamentId) async {
+    await checkAndRefreshToken();
     Map<String,String> headers = {
       'Content-type' : 'application/json',
     };
@@ -135,8 +135,8 @@ class RRSClient {
     );
   }
 
-  void addTeamMatchStats(String tournamentId, String matchId, TeamMatchStats tms) async {
-    checkAndRefreshToken();
+  Future<void> addTeamMatchStats(String tournamentId, String matchId, TeamMatchStats tms) async {
+    await checkAndRefreshToken();
     Map<String,String> headers = {
       'Content-type' : 'application/json',
     };

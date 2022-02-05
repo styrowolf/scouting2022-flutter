@@ -1,4 +1,3 @@
-import 'package:json_serializable/builder.dart';
 import 'package:rapid_react_scouting/models/identifiable.dart';
 import 'package:rapid_react_scouting/models/teammatchstats.dart';
 import 'package:rapid_react_scouting/models/teamnumber.dart';

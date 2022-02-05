@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rapid_react_scouting/state.dart';
 import 'theme.dart';
 import 'screens/scoutingscreen.dart';
 
-final stateProvider = StateNotifierProvider<RRSStateNotifier, RRSState>((ref) {
+final rrsStateProvider = StateNotifierProvider<RRSStateNotifier, RRSState>((ref) {
   return RRSStateNotifier();
 });
 
@@ -28,15 +30,16 @@ class RRSApp extends StatelessWidget {
   }
 }
 
-class RRSHome extends StatefulWidget {
+class RRSHome extends ConsumerStatefulWidget {
   const RRSHome({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  State<RRSHome> createState() => _RRSHomeState();
+  ConsumerState<RRSHome> createState() => _RRSHomeState();
 }
 
-class _RRSHomeState extends State<RRSHome> {
+class _RRSHomeState extends ConsumerState<RRSHome> {
+  late Future<void> f;
   int _selectedIndex = 0;
   List<Widget> pageList = <Widget>[];
 
@@ -47,58 +50,69 @@ class _RRSHomeState extends State<RRSHome> {
     pageList.add(const ScoutingScreen());
     pageList.add(const Text("Leaderboard"));
     pageList.add(const Text("Settings"));
+    _selectedIndex = pageList.length - 1;
+    f = ref.read(rrsStateProvider).initialize();
   }
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      _selectedIndex = ref.watch(rrsStateProvider).isDisabled ? pageList.length - 1 : index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.account_tree,
-              size: 24,
+    return FutureBuilder(
+      future: f,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Center(child: CircularProgressIndicator(),);
+        } else {
+          return Scaffold(
+            bottomNavigationBar: BottomNavigationBar(
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.account_tree,
+                    size: 24,
+                  ),
+                  label: "Tournaments",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.add,
+                    size: 24,
+                  ),
+                  label: "Scouting",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.leaderboard,
+                    size: 24,
+                  ),
+                  label: "Leaderboard",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.settings,
+                    size: 24,
+                  ),
+                  label: "Settings",
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
             ),
-            label: "Tournaments",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.add,
-              size: 24,
+            appBar: AppBar(
+              title: Text(widget.title),
             ),
-            label: "Scouting",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.leaderboard,
-              size: 24,
-            ),
-            label: "Leaderboard",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.settings,
-              size: 24,
-            ),
-            label: "Settings",
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: pageList,
-      )
+            body: IndexedStack(
+              index: _selectedIndex,
+              children: pageList,
+            )
+          );
+        }
+      }
     );
   }
 }

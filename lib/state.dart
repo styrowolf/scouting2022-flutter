@@ -5,20 +5,34 @@ import 'package:rapid_react_scouting/credentials.dart';
 // https://riverpod.dev/docs/providers/state_notifier_provider
 
 class RRSState {
-  RRSClient? client;
-  Credentials? _credentials;
-  late Status status;
+  late final RRSClient client;
+  late final Credentials? _credentials;
+  late final Status status;
+
+  Future<void> initialize({Credentials? credentials}) async {
+    if (credentials != null) {
+      _credentials = credentials;
+    } else {
+      credentials = await Credentials.fromStorage();
+      if (credentials != null) {
+        _credentials = credentials;
+      }
+      _credentials = null;
+    }
+    _setupClientAndSetStatus();
+  }
 
   static Future<RRSState> get(Credentials? credentials) async {
     RRSState state = RRSState();
     if (credentials != null) {
-      state.credentials = credentials;
+      state._credentials = credentials;
     } else {
       credentials = await Credentials.fromStorage();
       if (credentials != null) {
-        state.credentials = credentials;
+        state._credentials = credentials;
       }
     }
+    state._setupClientAndSetStatus();
     return state;
   }
 
@@ -28,7 +42,7 @@ class RRSState {
     } else {
       try {
         client = RRSClient.init(_credentials!);
-        if (client!.hasTeams) {
+        if (client.hasTeams) {
           status = Status.successfullyLoggedIn;
         } else {
           status = Status.noTeams;
@@ -39,9 +53,8 @@ class RRSState {
     }
   }
 
-  set credentials(Credentials credentials) {
-    _credentials = credentials;
-    _setupClientAndSetStatus();
+  RRSState copyWith() {
+    return this;
   }
 
   bool get noCredentials {
@@ -73,9 +86,11 @@ enum Status {
 }
 
 class RRSStateNotifier extends StateNotifier<RRSState> {
-  RRSStateNotifier() {
-    super(RRSState());
+  RRSStateNotifier(): super(RRSState());
+
+  Future<void> initialize({Credentials? credentials}) async {
+    RRSState _state = state.copyWith();
+    await _state.initialize(credentials: credentials);
+    state = _state;
   }
-
-
 }
