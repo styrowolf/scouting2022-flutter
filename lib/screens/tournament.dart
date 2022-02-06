@@ -12,6 +12,13 @@ class TournamentScreen extends ConsumerStatefulWidget {
 }
 
 class _TournamentScreenState extends ConsumerState<TournamentScreen> {
+  bool _easyRefresh = false;
+
+  void refresh() {
+    setState(() {
+      _easyRefresh = !_easyRefresh;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +46,7 @@ class _TournamentScreenState extends ConsumerState<TournamentScreen> {
                   const SizedBox(height: 16,),
                   TournamentsList(items: items),
                   const SizedBox(height: 16,),
-                  const TournamentsEditBox(),
+                  TournamentsEditBox(refresher: refresh),
                   const SizedBox(height: 16,)
                 ],
               )
@@ -94,7 +101,8 @@ class _TournamentsListState extends State<TournamentsList> {
 }
 
 class TournamentsEditBox extends ConsumerStatefulWidget {
-  const TournamentsEditBox({Key? key}): super(key: key);
+  final Function refresher;
+  const TournamentsEditBox({Key? key, required this.refresher}): super(key: key);
   @override
   ConsumerState<TournamentsEditBox> createState() => _TournamentsEditBoxState();
 }
@@ -113,9 +121,9 @@ class _TournamentsEditBoxState extends ConsumerState<TournamentsEditBox> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(width: double.infinity,),
-            Text(
-                    'Participating in another tournament?',
-                    style: Theme.of(context).textTheme.headline2,
+            Text(     
+              'Participating in another tournament?',  
+               style: Theme.of(context).textTheme.headline2,
             ),
             TextField(
                 controller: _tournamentNameController,
@@ -134,6 +142,7 @@ class _TournamentsEditBoxState extends ConsumerState<TournamentsEditBox> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Added $text.'))
                   );
+                  widget.refresher();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('A tournament with no name wouldn\' make much sense, would it?'))
