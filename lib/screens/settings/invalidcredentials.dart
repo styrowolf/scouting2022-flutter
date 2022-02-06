@@ -23,7 +23,7 @@ class InvalidCredentialsScreen extends ConsumerWidget {
           const SizedBox(height: 16),
           OutlinedButton(
             child: const Text("Login or register"),
-            onPressed: notifier.logout,
+            onPressed: () async { await notifier.logout(); },
           )
         ],
       )

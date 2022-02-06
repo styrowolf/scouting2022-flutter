@@ -12,7 +12,7 @@ class RRSClient {
   static const endpoint = "http://127.0.0.1:8000";
   late oauth2.Client client;
   final Credentials credentials;
-  late final User user;
+  late User user;
   int selectedTeamIndex = 0;
 
   RRSClient._construct(this.credentials);

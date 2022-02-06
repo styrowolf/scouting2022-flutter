@@ -11,7 +11,7 @@ class Tournament extends Identifiable {
   @override
   final String prefix = 'tournament-';
   @override
-  late final String id;
+  late String id;
   List<Match> matches = [];
 
   Tournament(this.name) {

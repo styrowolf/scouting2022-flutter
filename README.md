@@ -31,10 +31,10 @@ flutter pub run build_runner build
 - [x] Implement all data models
 - [x] Implement JSON Serialization
 - [x] Implement working oauth2 client
-- [ ] Implement central state management with riverpod
-- [ ] Implement login flow
+- [x] Implement central state management with riverpod
+- [x] Implement login flow
 - [ ] Implement Tournament/Match view and creation screen
 - [ ] Implement Scouting screen
 - [ ] Implement Leaderboard screen
-- [ ] Implement Setting screen
+- [x] Implement Setting screen
 

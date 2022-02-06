@@ -12,7 +12,7 @@ class Match extends Identifiable {
   @override
   final String prefix = 'match-';
   @override
-  late final String id;
+  late String id;
   List<TeamMatchStats> stats = [];
 
   Match(this.name) {

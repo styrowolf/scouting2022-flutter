@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rapid_react_scouting/main.dart';
 
-class LoginRegisterScreen extends ConsumerWidget {
+class LoginRegisterScreen extends StatelessWidget {
   const LoginRegisterScreen({Key? key}): super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final notifier = ref.watch(rrsStateProvider.notifier);
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -88,8 +87,11 @@ class _LoginRegisterFormState extends ConsumerState<LoginRegisterForm> {
                     await notifier.login(email: emailController.text, password: passwordController.text);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(
-                        emailController.text == '' ? 'The empty string is not a valid email.' : '${emailController.text} is not a valid email.'))
+                      SnackBar(
+                        content: Text(
+                          emailController.text == '' ? 'The empty string is not a valid email.' : '${emailController.text} is not a valid email.'
+                        )
+                      )
                     );
                   }
                 },
@@ -105,7 +107,11 @@ class _LoginRegisterFormState extends ConsumerState<LoginRegisterForm> {
                     await notifier.register(email: emailController.text, password: passwordController.text);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('${emailController.text} is not a valid email.'))
+                      SnackBar(
+                        content: Text(
+                          emailController.text == '' ? 'The empty string is not a valid email.' : '${emailController.text} is not a valid email.'
+                        )
+                      )
                     );
                   }
                 }, 

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rapid_react_scouting/screens/settings.dart';
+import 'package:rapid_react_scouting/screens/tournament.dart';
 import 'package:rapid_react_scouting/state.dart';
 import 'theme.dart';
 import 'screens/scouting.dart';
@@ -45,7 +46,7 @@ class _RRSHomeState extends ConsumerState<RRSHome> {
   @override
   void initState() {
     super.initState();
-    pageList.add(const Text("Tournament"));
+    pageList.add(const TournamentScreen());
     pageList.add(const Scouting());
     pageList.add(const Text("Leaderboard"));
     pageList.add(const Settings());

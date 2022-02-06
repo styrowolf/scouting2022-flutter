@@ -100,10 +100,16 @@ class RRSStateNotifier extends StateNotifier<RRSState> {
     state = _state;
   }
 
-  void logout() {
+  Future<void> refresh() async {
+    RRSState _state = state.copyWith();
+    await _state.client!.refreshToken();
+    state = _state;
+  }
+
+  Future<void> logout() async {
     RRSState _state = state.copyWith();
     _state._credentials = null;
-    _state._setupClientAndSetStatus();
+    await _state._setupClientAndSetStatus();
     state = _state;
   }
 
@@ -115,7 +121,7 @@ class RRSStateNotifier extends StateNotifier<RRSState> {
     RRSState _state = state.copyWith();
     _state._credentials = credentials;
     await _state._setupClientAndSetStatus();
-    credentials.toStorage();
+    await credentials.toStorage();
     state = _state;
   }
 
@@ -131,5 +137,11 @@ class RRSStateNotifier extends StateNotifier<RRSState> {
     request.write(jsonEncode(credentials.toJson()));
     await request.close();
     await login(credentials: credentials);
+  }
+
+  void setSelectedTeam(int index) {
+    RRSState _state = state.copyWith();
+    _state.client!.selectedTeamIndex = index;
+    state = _state;
   }
 }
