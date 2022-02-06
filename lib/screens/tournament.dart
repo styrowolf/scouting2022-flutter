@@ -27,6 +27,7 @@ class _TournamentScreenState extends ConsumerState<TournamentScreen> {
           return Padding(
             padding: const EdgeInsets.all(16),
             child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,13 +39,14 @@ class _TournamentScreenState extends ConsumerState<TournamentScreen> {
                   const SizedBox(height: 16,),
                   TournamentsList(items: items),
                   const SizedBox(height: 16,),
-                  //const TournamentsEditBox(),
+                  const TournamentsEditBox(),
+                  const SizedBox(height: 16,)
                 ],
               )
             )
           );
         } else {
-          return const CircularProgressIndicator();
+          return const Center(child: CircularProgressIndicator());
         }
       },
     );
@@ -104,43 +106,44 @@ class _TournamentsEditBoxState extends ConsumerState<TournamentsEditBox> {
     final client = ref.watch(rrsStateProvider.select((value) => value.client!));
     final notifier = ref.watch(rrsStateProvider.notifier);
     return Card(
-      child: Column(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(width: double.infinity,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                OutlinedButton(
-                  child: const Text('Add new tournament'),
-                  onPressed: () async {
-                    String text = _tournamentNameController.text;
-                    if (text != "") {
-                      await client.createTournament(text);
-                      await notifier.refresh();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Added $text.'))
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('A tournament with no name wouldn\' make much sense, would it?'))
-                      );
-                    }
-                  },
+            Text(
+                    'Participating in another tournament?',
+                    style: Theme.of(context).textTheme.headline2,
+            ),
+            TextField(
+                controller: _tournamentNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Tournament name',
                 ),
-                const SizedBox(width: 8,),
-                TextField(
-                  controller: _tournamentNameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Tournament name',
-                  ),
-                )
-              ],
+              ),
+            const SizedBox(height: 16,),
+            OutlinedButton(
+              child: const Text('Add new tournament'),
+              onPressed: () async {
+                String text = _tournamentNameController.text;
+                if (text != "") {
+                  await client.createTournament(text);
+                  await notifier.refresh();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Added $text.'))
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('A tournament with no name wouldn\' make much sense, would it?'))
+                  );
+                }
+              },
             ),
           ]
         ),
+      ),
     );
   }
 }
