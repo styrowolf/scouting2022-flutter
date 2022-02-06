@@ -100,7 +100,7 @@ class _MatchesEditBoxState extends ConsumerState<MatchesEditBox> {
     return _presets[_selectedIndex];
   }
 
-  set selectedIndex(int i) {
+  void setSelectedIndex(int i) {
     setState(() {
       _selectedIndex = i;
     });
@@ -139,7 +139,7 @@ class _MatchesEditBoxState extends ConsumerState<MatchesEditBox> {
                       child: Text(p),
                     ))), 
                     onChanged: (String? s) {
-                      _selectedIndex = _presets.indexOf(s!);
+                      setSelectedIndex(_presets.indexOf(s!));
                     }
                   )
                 ],
