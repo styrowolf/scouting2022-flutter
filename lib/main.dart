@@ -40,24 +40,33 @@ class RRSHome extends ConsumerStatefulWidget {
 
 class _RRSHomeState extends ConsumerState<RRSHome> {
   late Future<void> f;
-  int _selectedIndex = 0;
-  List<Widget> pageList = <Widget>[];
+  int _selectedIndex = 3;
 
   @override
   void initState() {
     super.initState();
-    pageList.add(const TournamentScreen());
-    pageList.add(const Scouting());
-    pageList.add(const Text("Leaderboard"));
-    pageList.add(const Settings());
-    _selectedIndex = pageList.length - 1;
     f = ref.read(rrsStateProvider).initialize();
   }
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = ref.watch(rrsStateProvider.select((value) => value.isDisabled)) ? pageList.length - 1 : index;
+      _selectedIndex = ref.watch(rrsStateProvider.select((value) => value.isDisabled)) ? 3 : index;
     });
+  }
+
+  Widget getChild() {
+    switch (_selectedIndex) {
+      case 0:
+        return TournamentScreen(key: UniqueKey());
+      case 1:
+        return Scouting(key: UniqueKey());
+      case 2:
+        return const Text("Leaderboard");
+      case 3:
+        return Settings(key: UniqueKey());
+      default:
+        return const Text('this cannot happen, so?');
+    }
   }
 
   @override
@@ -106,10 +115,7 @@ class _RRSHomeState extends ConsumerState<RRSHome> {
             appBar: AppBar(
               title: Text(widget.title),
             ),
-            body: IndexedStack(
-              index: _selectedIndex,
-              children: pageList,
-            )
+            body: getChild(),
           );
         }
       }
