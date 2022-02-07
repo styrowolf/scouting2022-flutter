@@ -1,56 +1,104 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rapid_react_scouting/main.dart';
+import 'package:rapid_react_scouting/models/match.dart';
+import 'package:rapid_react_scouting/models/teamdata.dart';
+import 'package:rapid_react_scouting/models/tournament.dart';
 
-class Scouting extends StatefulWidget {
+class Scouting extends ConsumerStatefulWidget {
   const Scouting({Key? key}): super(key: key);
 
   @override
-  State<Scouting> createState() => _ScoutingState();
+  ConsumerState<Scouting> createState() => _ScoutingState();
 }
 
-class _ScoutingState extends State<Scouting> {
-  int _teamNumber = 0;
+class _ScoutingState extends ConsumerState<Scouting> {
+  int _selectedTournamentIndex = 0;
+  int _selectedMatchIndex = 0;
   final _controller = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    _controller.addListener(() {
-      final String text = _controller.text;
-      try {
-        _teamNumber = int.parse(text);
-        _controller.value = _controller.value.copyWith(
-          text: text.trim(),
-        );
-      } catch(e) {
-        _controller.value = _controller.value.copyWith(
-          text: text == "" ||  _teamNumber == 0 ? "" : _teamNumber.toString(),
-          selection: TextSelection(
-            baseOffset: _controller.value.selection.baseOffset == 0 ? _controller.value.selection.baseOffset : _controller.value.selection.baseOffset - 1, 
-            extentOffset: _controller.value.selection.extentOffset == 0 ? _controller.value.selection.extentOffset : _controller.value.selection.extentOffset -1,
-          )
-        );
-      }
+  void setSelectedTournamentIndex(int i) {
+    setState(() {
+      _selectedMatchIndex = 0;
+      _selectedTournamentIndex = i;
+    });
+  }
+  
+  void setSelectedMatchIndex(int i) {
+    setState(() {
+      _selectedMatchIndex = i;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          TextField(
-            cursorColor: Theme.of(context).textSelectionTheme.cursorColor,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'Team number',
-            ),
-            controller: _controller,
+    final client = ref.watch(rrsStateProvider.select((value) => value.client!));
+    final Future<TeamData?> f = client.getData();
+    
+    return FutureBuilder(
+      future: f,
+      builder: (context, snapshot) {
+        final TeamData data;
+        if (snapshot.hasData) {
+          data = snapshot.data! as TeamData;
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+          return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text('Tournament:'),
+                  const SizedBox(width: 8,),
+                  DropdownButton<Tournament>(
+                    value: data.tournaments[_selectedTournamentIndex],
+                    items: List.from(data.tournaments.map((t) => DropdownMenuItem(
+                      value: t,
+                      child: Text(t.name)) 
+                    )), 
+                    onChanged: (Tournament? t) {
+                      int index = data.tournaments.indexOf(t!);
+                      setSelectedTournamentIndex(index);
+                    }
+                  )
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text('Match:'),
+                  const SizedBox(width: 8,),
+                  DropdownButton<Match>(
+                    value: data.tournaments[_selectedTournamentIndex].matches[_selectedMatchIndex],
+                    items: List.from(data.tournaments[_selectedTournamentIndex].matches.map((m) => DropdownMenuItem(
+                      value: m,
+                      child: Text(m.name)) 
+                    )), 
+                    onChanged: (Match? m) {
+                      int index = data.tournaments[_selectedTournamentIndex].matches.indexOf(m!);
+                      setSelectedMatchIndex(index);
+                    }
+                  )
+                ],
+              ),
+              TextFormField(
+                keyboardType: TextInputType.phone, // TODO: or try TextInputType.number
+                decoration: const InputDecoration(
+                  label: Text('Team number')
+                ),
+                controller: _controller,
+              ),
+            ],
           )
-        ],
-      )
+        );
+      },
     );
   }
 }

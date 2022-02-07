@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rapid_react_scouting/models/teamdata.dart';
 import 'package:rapid_react_scouting/screens/settings.dart';
 import 'package:rapid_react_scouting/screens/tournament.dart';
 import 'package:rapid_react_scouting/state.dart';
@@ -11,6 +12,20 @@ import 'screens/scouting.dart';
 final rrsStateProvider = StateNotifierProvider<RRSStateNotifier, RRSState>((ref) {
   return RRSStateNotifier();
 });
+/*
+
+final cachedData = StateNotifierProvider<Notifier<TeamData>, TeamData>((ref) {
+  return Notifier(TeamData(0, []));
+});
+
+class Notifier<T> extends StateNotifier<T> {
+  Notifier(T value): super(value);
+  
+  void set(T value) {
+    state = value;
+  }
+}
+*/
 
 void main() {
   runApp(ProviderScope(child: RRSApp()));

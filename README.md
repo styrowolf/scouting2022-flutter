@@ -24,6 +24,9 @@ flutter pub run build_runner build
 
 ## Current Plan
 
+Possible changes for better architecture:
+
+- Use rebuilder in state but have a void method so it shows up as used and rebuilds
 
 
 ## Current Status
@@ -37,4 +40,5 @@ flutter pub run build_runner build
 - [ ] Implement Scouting screen
 - [ ] Implement Leaderboard screen
 - [x] Implement Setting screen
+
 

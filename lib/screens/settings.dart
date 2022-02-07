@@ -7,22 +7,11 @@ import 'package:rapid_react_scouting/screens/settings/teamless.dart';
 import 'package:rapid_react_scouting/state.dart';
 import 'package:rapid_react_scouting/main.dart';
 
-class Settings extends ConsumerStatefulWidget {
+class Settings extends ConsumerWidget {
   const Settings({Key? key}): super(key: key);
 
   @override
-  ConsumerState<Settings> createState() => _SettingsState();
-}
-
-class _SettingsState extends ConsumerState<Settings> {
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final Status status = ref.watch(rrsStateProvider.select((value) => value.status));
     switch (status) {
       case Status.successfullyLoggedIn:

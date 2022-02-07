@@ -31,10 +31,15 @@ class _TournamentScreenState extends ConsumerState<TournamentScreen> {
     return FutureBuilder(
       future: f,
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final data = snapshot.data! as TeamData;
-          final items = data.tournaments.map<Item<Tournament>>((e) => Item(e)).toList();
-          return Padding(
+        final TeamData data;
+        final List<Item<Tournament>> items;
+        if (snapshot.hasData) { 
+          data = snapshot.data! as TeamData;
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+        items = data.tournaments.map<Item<Tournament>>((e) => Item(e)).toList();
+        return Padding(
             padding: const EdgeInsets.all(16),
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
@@ -55,9 +60,6 @@ class _TournamentScreenState extends ConsumerState<TournamentScreen> {
               )
             )
           );
-        } else {
-          return const Center(child: CircularProgressIndicator());
-        }
       },
     );
   }

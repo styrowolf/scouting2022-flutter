@@ -9,7 +9,7 @@ import 'package:rapid_react_scouting/models/teamnumber.dart';
 import 'package:rapid_react_scouting/models/user.dart';
 
 class RRSClient {
-  static const endpoint = "http://127.0.0.1:8000";
+  static const endpoint = "https://scouting2022.deta.dev";
   late oauth2.Client client;
   final Credentials credentials;
   late User user;
