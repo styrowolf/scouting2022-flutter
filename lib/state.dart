@@ -25,7 +25,7 @@ class RRSState {
       }
       _credentials = null;
     }
-    _setupClientAndSetStatus();
+    await _setupClientAndSetStatus();
   }
 
   static Future<RRSState> get(Credentials? credentials) async {

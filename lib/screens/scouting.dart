@@ -18,10 +18,12 @@ class _ScoutingState extends ConsumerState<Scouting> {
   final _controller = TextEditingController();
 
   void setSelectedTournamentIndex(int i) {
-    setState(() {
-      _selectedMatchIndex = 0;
-      _selectedTournamentIndex = i;
-    });
+    if (i != _selectedTournamentIndex) {
+      setState(() {
+        _selectedMatchIndex = 0;
+        _selectedTournamentIndex = i;
+      });
+    }
   }
   
   void setSelectedMatchIndex(int i) {
@@ -46,59 +48,62 @@ class _ScoutingState extends ConsumerState<Scouting> {
         }
           return Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text('Tournament:'),
-                  const SizedBox(width: 8,),
-                  DropdownButton<Tournament>(
-                    value: data.tournaments[_selectedTournamentIndex],
-                    items: List.from(data.tournaments.map((t) => DropdownMenuItem(
-                      value: t,
-                      child: Text(t.name)) 
-                    )), 
-                    onChanged: (Tournament? t) {
-                      int index = data.tournaments.indexOf(t!);
-                      setSelectedTournamentIndex(index);
-                    }
-                  )
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text('Match:'),
-                  const SizedBox(width: 8,),
-                  DropdownButton<Match>(
-                    value: data.tournaments[_selectedTournamentIndex].matches[_selectedMatchIndex],
-                    items: List.from(data.tournaments[_selectedTournamentIndex].matches.map((m) => DropdownMenuItem(
-                      value: m,
-                      child: Text(m.name)) 
-                    )), 
-                    onChanged: (Match? m) {
-                      int index = data.tournaments[_selectedTournamentIndex].matches.indexOf(m!);
-                      setSelectedMatchIndex(index);
-                    }
-                  )
-                ],
-              ),
-              TextFormField(
-                keyboardType: TextInputType.phone, // TODO: or try TextInputType.number
-                decoration: const InputDecoration(
-                  label: Text('Team number')
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text('Tournament:'),
+                    const SizedBox(width: 8,),
+                    DropdownButton<Tournament>(
+                      value: data.tournaments[_selectedTournamentIndex],
+                      items: List.from(data.tournaments.map((t) => DropdownMenuItem(
+                        value: t,
+                        child: Text(t.name)) 
+                      )), 
+                      onChanged: (Tournament? t) {
+                        int index = data.tournaments.indexOf(t!);
+                        setSelectedTournamentIndex(index);
+                      }
+                    )
+                  ],
                 ),
-                controller: _controller,
-              ),
-            ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text('Match:'),
+                    const SizedBox(width: 8,),
+                    DropdownButton<Match>(
+                      value: data.tournaments[_selectedTournamentIndex].matches[_selectedMatchIndex],
+                      items: List.from(data.tournaments[_selectedTournamentIndex].matches.map((m) => DropdownMenuItem(
+                        value: m,
+                        child: Text(m.name)) 
+                      )), 
+                      onChanged: (Match? m) {
+                        int index = data.tournaments[_selectedTournamentIndex].matches.indexOf(m!);
+                        setSelectedMatchIndex(index);
+                      }
+                    ),
+                  ],
+                ),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    label: Text('Team number')
+                  ),
+                  controller: _controller,
+                ),
+              ],
+            )
           )
         );
       },
     );
   }
 }
+
