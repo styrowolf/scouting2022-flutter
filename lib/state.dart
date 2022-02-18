@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rapid_react_scouting/client.dart';
 import 'package:rapid_react_scouting/credentials.dart';
+import 'package:http/http.dart' as http;
 
 // https://riverpod.dev/docs/providers/state_notifier_provider
 
@@ -130,12 +130,9 @@ class RRSStateNotifier extends StateNotifier<RRSState> {
       credentials ??= Credentials(email, password);
     }
     if (credentials == null) return;
-    var client = HttpClient();
-    var request = await client.postUrl(RRSClient.registrationEndpoint);
-    request.headers.contentType =
-    ContentType('application', 'json', charset: 'utf-8');
-    request.write(jsonEncode(credentials.toJson()));
-    await request.close();
+    await http.Client().post(RRSClient.registrationEndpoint, 
+    body: jsonEncode({"email": credentials.email, "password": credentials.password}),
+    headers: {"Content-Type": "application/json; charset=utf-8"});
     await login(credentials: credentials);
   }
 

@@ -9,7 +9,7 @@ import 'package:rapid_react_scouting/models/teamnumber.dart';
 import 'package:rapid_react_scouting/models/user.dart';
 
 class RRSClient {
-  static const endpoint = "https://whispering-retreat-82988.herokuapp.com/";
+  static const endpoint = "https://whispering-retreat-82988.herokuapp.com";
   late oauth2.Client client;
   final Credentials credentials;
   late User user;
